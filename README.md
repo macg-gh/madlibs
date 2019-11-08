@@ -19,14 +19,12 @@ Start mysql with just 'mysql' and no other options. The changes we're about to m
 Run the following command in mysql: ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '<YOUR PASSWORD>';
 The password value used will be the root password of mysql, and will be required for logins from this point forward.
 
-2 - Run database.sql
+2 - Run dbcreate.sql
 Using mysql, run this with the following command: source database.sql
 Note - you may have to include the path to this file depending on where it is located.
 
-3 - Run database.sql in mysql to setup the database
+3 - Place the following files into /var/www/html/ (details incoming).
 
-4 - Place the following files into /var/www/html/ (details incoming).
-
-5 - Edit dbconfig.php to use the password set in step 1.
+4 - Edit dbconfig.php to use the password set in step 1.
 
 Once these steps are complete, you should be able to start generating madlibs and saving the result.
