@@ -15,7 +15,7 @@ if(isset($_POST['formtype']))
 {
     $formatType = $_POST['formtype'];
 
-	if($formatType == 'createrandomnumber')
+	if($formatType == 'createtemplate')
 	{
 			echo "You have selected this many words: ";
 			echo $_POST['howmanywords']."<br>";
@@ -26,8 +26,22 @@ if(isset($_POST['formtype']))
 			}
 			$i = '';
 			echo "Fill in the phrase!";
+			echo "<form method=\"post\">";
+			echo "<form method=\"post\">";
+			echo "<form method=\"post\">";
+			echo "<form method=\"post\">";
+			echo "<input type=\"hidden\" name=\"formtype\" value=\"fillinphrase\">";
+			echo "Phrase: <textarea name=\"phrase\"></textarea>";
+			echo "Rank: <textarea name=\"rank\"></textarea>";
+			echo "Note: <textarea name=\"note\"></textarea>";
+			echo "<input type=\"submit\" value=\"Submit Phrase.\">";
+			echo "</form>";
+			// 
+		// </form>			
 
 	}
+
+
 	if($formatType == 'fillinphrase')
 	{
 			$rank = 0;
@@ -64,32 +78,32 @@ if(isset($_POST['formtype']))
 			}
     }
 
-
 		
+	
+}
+else
+{
+	$boxtext = rand(3,20);
+	echo "<form method=\"post\">";
+	echo "<input type=\"hidden\" name=\"formtype\" value=\"createtemplate\">";
+	echo "How many words? <textarea name=\"howmanywords\">";
+	echo $boxtext;
+	echo "</textarea>";
+	echo "<input type=\"submit\" value=\"Submit word selection.\">";
+	echo "</form>";
 	
 }
 
 
 
 ?>
-<form method="post">
-    <input type="hidden" name="formtype" value="createrandomnumber">
-	How many words? <textarea name="howmanywords"><?php echo rand(3,20) ?></textarea>
-	<input type="submit" value="Submit word selection.">
-</form>
 
-<form method="post">
-    <input type="hidden" name="formtype" value="fillinphrase">
-	Phrase: <textarea name="phrase"></textarea>
-	Rank: <textarea name="rank"></textarea>
-	Note: <textarea name="note"></textarea>
-	<input type="submit" value="Submit Phrase.">
-</form>
-
+<br>
+<br>
 <form method="post">
     <input type="hidden" name="formtype" value="dumpdb">
     Create Event    <input type="submit" value="DumP current db">
-</form>
+</form> 
 
 
 </body>
