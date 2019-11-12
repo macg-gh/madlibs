@@ -25,20 +25,26 @@ if(isset($_POST['formtype']))
 				echo chr(rand(65,90))."<br>";
 			}
 			$i = '';
+			echo "<br>";
 			echo "Fill in the phrase!";
+			echo "<br>";
+			echo "<br>";			
 			echo "<form method=\"post\">";
 			echo "<form method=\"post\">";
 			echo "<form method=\"post\">";
 			echo "<form method=\"post\">";
 			echo "<input type=\"hidden\" name=\"formtype\" value=\"fillinphrase\">";
 			echo "Phrase: <textarea name=\"phrase\"></textarea>";
+			echo "<br>";
+			echo "<br>";			
 			echo "Rank: <textarea name=\"rank\"></textarea>";
+			echo "<br>";			
+			echo "<br>";			
 			echo "Note: <textarea name=\"note\"></textarea>";
+			echo "<br>";
+			echo "<br>";						
 			echo "<input type=\"submit\" value=\"Submit Phrase.\">";
 			echo "</form>";
-			// 
-		// </form>			
-
 	}
 
 
@@ -54,7 +60,6 @@ if(isset($_POST['formtype']))
 			$query = "insert into entry (phrase, rank, note) values(";
 			$query .= "'";
 			$query .= $_POST['phrase'];
-			#$query .= "some default testing name";
 			$query .= "',";
 			$query .= "'";
 			$query .= $rank;
@@ -73,7 +78,6 @@ if(isset($_POST['formtype']))
 			$result = mysqli_query($link, $query);
             while ($obj = mysqli_fetch_object($result))
 			{
-                #printf ("%s (%s)\n", $obj->Name, $obj->CountryCode);
 				echo $obj->id." | ".$obj->phrase." | ".$obj->rank." | ".$obj->note."<br>" ;
 			}
     }
@@ -89,6 +93,8 @@ else
 	echo "How many words? <textarea name=\"howmanywords\">";
 	echo $boxtext;
 	echo "</textarea>";
+	echo "<br>";
+	echo "<br>";
 	echo "<input type=\"submit\" value=\"Submit word selection.\">";
 	echo "</form>";
 	
