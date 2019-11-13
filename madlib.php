@@ -10,7 +10,7 @@
 require_once('dbconfig.php');
 
 $i = '';
-
+#adding this comment ofr the apostrophe branch just going to do it as a commit and merge practice
 if(isset($_POST['formtype']))
 {
     $formatType = $_POST['formtype'];
