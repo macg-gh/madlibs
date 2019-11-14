@@ -50,8 +50,15 @@ if(isset($_POST['formtype']))
 
 	if($formatType == 'fillinphrase')
 	{
+			$escapedphrase='';
+			$escapednote='';
+			
+			$escapedphrase = mysqli_real_escape_string($link , $_POST['phrase']);
+			$escapednote=mysqli_real_escape_string($link , $_POST['note']);
+			
 			$rank = 0;
 			## Should have some kind of check to see that the rank is a number only.
+			## For now if it's not there it gets set to zero.
 			if ($_POST['rank'])
 			{
 				$rank = $_POST['rank'];
@@ -59,13 +66,14 @@ if(isset($_POST['formtype']))
 			echo $_POST['phrase'];
 			$query = "insert into entry (phrase, rank, note) values(";
 			$query .= "'";
-			$query .= $_POST['phrase'];
+
+			$query .= $escapedphrase;
 			$query .= "',";
 			$query .= "'";
 			$query .= $rank;
 			$query .= "',";
 			$query .= "'";
-			$query .= $_POST['note'];
+			$query .= $escapednote;
 			$query .= "'";
 			$query .= ");";
 			echo $query;
