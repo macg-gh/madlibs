@@ -55,29 +55,43 @@ if(isset($_POST['formtype']))
 			
 			$escapedphrase = mysqli_real_escape_string($link , $_POST['phrase']);
 			$escapednote=mysqli_real_escape_string($link , $_POST['note']);
+			#This is a defensive escape of rank. There is another check for number below,
+			#but if the check for number even malfunctions this escape may still impede an exploit.
+			$escapedrank=mysqli_real_escape_string($link , $_POST['rank']);
 			
-			$rank = 0;
 			## Should have some kind of check to see that the rank is a number only.
 			## For now if it's not there it gets set to zero.
-			if ($_POST['rank'])
+			if ( !is_numeric( $escapedrank ) )
 			{
-				$rank = $_POST['rank'];
-			}			
-			echo $_POST['phrase'];
+				echo "Please enter a valid rank value.";
+				exit;
+			}
+
 			$query = "insert into entry (phrase, rank, note) values(";
 			$query .= "'";
 
 			$query .= $escapedphrase;
 			$query .= "',";
 			$query .= "'";
-			$query .= $rank;
+			$query .= $escapedrank;
 			$query .= "',";
 			$query .= "'";
 			$query .= $escapednote;
 			$query .= "'";
 			$query .= ");";
-			echo $query;
-			mysqli_query($link, $query);
+			#unit test - $query = "''''''asdfasdfa'''LLL::13218&(&(*U&0";
+
+			if (mysqli_query($link, $query))
+			{
+				echo "Added to the madlib Collection!";
+			}
+			else	
+			{
+				echo "<br>";
+				echo "<br>";
+				echo "The following query was not successful: ";
+				echo $query;
+			}
 	}
 	if($formatType == 'dumpdb')
 	{
