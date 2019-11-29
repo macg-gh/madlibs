@@ -1,41 +1,43 @@
 <!DOCTYPE html>
 <html>
 <style>
-    body{
+    body
+	{
         background-color:#6699ff;
-}
+	}
 </style>
 <body>
 <?php
 $howmanywords = $_POST['howmanywords'];
-#if ( (is_numeric($howmanywords)) && ( $howmanywords > 0) && ($howmanywords < 21) )
-if (is_numeric($howmanywords))	
+if ( (is_numeric($howmanywords)) && ( $howmanywords > 0) && ($howmanywords < 21) )
 {
-	$letters='';
-	echo "You have selected this many words: ";
-	echo $_POST['howmanywords']."<br>";
+	echo "    You have selected this many words:&nbsp;";
+	echo $_POST['howmanywords'];
+	echo "\n    <br>";
+	echo "\n    <form method=\"post\" action=\"checkphrase.php\">";
 	for ( $i = 0 ; $i < $_POST['howmanywords']; $i++ )
 	{
-		echo "<br>";
-		$char = chr(rand(65,90))."<br>";
+		echo "\n    <br>";
+		$char = chr(rand(65,90));
 		echo $char;
-		$letters+=$char;
+		echo " :&nbsp;&nbsp;<textarea name=\"$char\"></textarea>";
+		echo "\n    <br>";
+		echo "\n    <br>";
+		#echo "$i";
 	}
 	$i = ''; 
-	echo "<br>";
+
 	echo "Fill in the phrase!";
-	echo "<br>";
-	echo "<br>";			
-	echo "<form method=\"post\" action=\"checkphrase.php\">";
-	echo "<input type=\"hidden\" name=\"letters\" value=\"$letters\">";	
-	echo "Phrase: <textarea name=\"phrase\"></textarea>";
-	echo "<br>";
-	echo "<br>";			
-	echo "<input type=\"submit\" value=\"Submit Phrase.\">";
-	echo "</form>";
+	echo "\n    <br>";
+	echo "\n    <br>";
+	echo "\n        <input type=\"submit\" value=\"Submit Phrase.\">";
 }
 
-echo "create template here.";
-echo $_POST['howmanywords'];
-
 ?>
+
+    </form>
+	<br>
+	<br>
+	<a href="dumpdb.php">Dump db</a>
+</body>
+</html>
