@@ -9,6 +9,8 @@
 <body>
 <?php
 require_once('dbconfig.php');
+require_once('dictionary.php');
+
 $postargcount=count($_POST);
 
 if( $postargcount> 0 && $postargcount < 21 ) 
@@ -18,20 +20,20 @@ if( $postargcount> 0 && $postargcount < 21 )
 	foreach ($_POST as $letter => $word)
 	{
 		## unit test - 		$letter = 'P';
-		if (strtoupper($word[0]) == $letter )
+		if ( strcmp(strtoupper($word[0]),$letter) != 0 )
 		{
-			echo "    $letter : ".$word."$val is good<br>\n";
+			$check_errors.="    Letter match check failed for the following: $word $letter <br>\n";
 		}
-		else
+		
+		if (!pspell_check($pspell_link, $word))
 		{
-			$check_errors.="Check failed for the following (letter, word, word first char, word first char converted to upper case:<br>\n";
-			echo "\nDEBUG:<br><br>\n ".$letter . ': ' . $word. ' : ' .$word[0] .' : '. strtoupper($word[0]) . " is bad\n<br>";
+			$check_errors.="    Spelling (dictionary) check failed for word: $word , letter was $letter <br>\n";
 		}
 	}
 	
 	if (!$check_errors=='')
 	{
-		echo "\n<br>No DB operations performed due to check errors on the phrase submission.\n<br>";
+		echo "\n    <br>No DB operations performed due to check errors on the phrase submission.\n    <br>errors encountered:\n    <br>$check_errors\n    <br>";
 	}
 	else
 	{
