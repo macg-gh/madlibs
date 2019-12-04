@@ -43,7 +43,7 @@ elseif ((is_numeric($id)) && ( $id > 0) )
 		echo "<input type=\"hidden\" name=\"id\" value=\"$id\">";	
 		echo "<br>";
 		echo "<br>";            
-		echo "<input type=\"submit\" value=\"Proceed.\">";
+		echo "<input type=\"submit\" value=\"Proceed to enter note.\">";
 		echo "</form>"; 
 	}
 	else

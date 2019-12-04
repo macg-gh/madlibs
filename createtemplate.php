@@ -20,10 +20,9 @@ if ( (is_numeric($howmanywords)) && ( $howmanywords > 0) && ($howmanywords < 21)
 		echo "\n    <br>";
 		$char = chr(rand(65,90));
 		echo $char;
-		echo " :&nbsp;&nbsp;<textarea name=\"$char\"></textarea>";
+		echo " :&nbsp;&nbsp;<textarea name=\"$char"."_"."$i\"></textarea>";
 		echo "\n    <br>";
 		echo "\n    <br>";
-		#echo "$i";
 	}
 	$i = ''; 
 
