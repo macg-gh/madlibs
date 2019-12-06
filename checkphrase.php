@@ -96,7 +96,7 @@ if( $postargcount> 0 && $postargcount < 21 )
 
 		//// Check for mispels which will be corrected if necessary.
 		//   echo "\ncount of mispelled words ".count($mispelled_words);
-		if (count($mispelled_words!=0))
+		if (count($mispelled_words)!=0)
 		{
 			echo "\n    <form method=\"post\" action=\"corrections.php\">";
 			
