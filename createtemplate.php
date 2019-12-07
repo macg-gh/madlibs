@@ -24,7 +24,6 @@ if ( (is_numeric($howmanywords)) && ( $howmanywords > 0) && ($howmanywords < 21)
 		echo "\n    <br>";
 		echo "\n    <br>";
 	}
-	$i = ''; 
 
 	echo "Fill in the phrase!";
 	echo "\n    <br>";
