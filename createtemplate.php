@@ -10,7 +10,7 @@
 
 <?php
 require_once('./lib/madlib.php');
-require_once('./lib/form.php');
+require_once('./lib/formjson.php');
 
 $e;
 $madlib = new Madlib;
@@ -20,8 +20,7 @@ try
 }
 catch(Exception $e)
 {
-	echo "\n	<br>Generation of letters was unsuccessful.";
-	echo "\n	<br>";
+	echo "\n	<br>Generation of letters was unsuccessful: $e";
 	echo "\n</body>";
 	echo "\n</html>";
 	exit;	
@@ -30,38 +29,31 @@ catch(Exception $e)
 echo "    You have selected this many words:&nbsp;";
 echo $_POST['howmanywords'];
 echo "\n    <br>";
+echo "\n    <br>";
 
-$form = new Form;
-$textareaattrs;
+$formjson = new FormJson;
 
-for ( $i = 0 ; $i <strlen($letters) ; $i++)
+$formdata = "{
+	\"postto\": \"checkphrase.php\",
+	\"textareas\" : [{\"info\" : \"$letters[0] : \" , \"name\" : \"$letters[0]_0\" } ";
+	
+for ( $i = 1 ; $i < strlen($letters) ; $i++ )
 {
-	$textareainfo=$letters[$i]." : ";
-	$textareaname=$letters[$i]."_".$i;
-	$textareaattrs[$textareainfo]=$textareaname;
+	$formdata.=", {\"info\" : \"".$letters[$i]." : \" , \"name\" : \"".$letters[$i].'_'.$i."\"   } ";
 }
+
+$formdata .= "]\n}";
 
 try
 {
-	$returnlines=$form->GenerateForm( "" , "checkphrase.php" , $textareaattrs );
+	$formjson->GenerateForm( $formdata );
 }
 catch (Exception $f)
 {
 	echo "\n	<br>Generation of Form was unsuccessful.$f";
 	echo "\n	<br>";
-	echo "\n</body>";
-	echo "\n</html>";
-	exit;		
 }
 
-foreach ($returnlines as $testreturnline)
-{
-	echo $testreturnline;
-}
-
-echo "</form>";
-echo "\n	<br>";
-echo "\n	<br>";	
 echo "\n</body>";
 echo "\n</html>";
 

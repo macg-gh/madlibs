@@ -8,7 +8,7 @@ class Madlib
 	
 	public function GenerateLetters($numwords)
 	{
-		$letters;
+		$letters='';
 		$i;
 		if( !(($numwords > 1) && ($numwords < 21)) )
 		{

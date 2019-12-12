@@ -8,18 +8,29 @@
 </style>
 <body>
 <?php
-require_once('dbconfig.php');
-## get the id
+
+require_once('./lib/dbops.php');
+require_once('./lib/formjson.php');
+
+$dbops = new DBops;
+$formjson = new FormJson;
+// get the id
 $id = $_POST['id'];
 unset ($_POST['id']);
 
-## get the phrase
-$readphrase = '';
-$query = "SELECT * FROM entry WHERE ID='".$id."';";
-
-$result = mysqli_query($link, $query);
-$obj = mysqli_fetch_object($result);
-$readphrase = $obj->phrase;
+$readphrase;
+// get the phrase
+try
+{
+	$readphrase=$dbops->GetPhrase($id);
+}
+catch(Exception $e)
+{
+	echo "Could not get the phrase which will be corrected: $e";
+	echo "\n</body>";
+	echo "\n</html>";
+	exit;	
+}
 
 echo "\n    <br>read phrase is $readphrase\n    <br>";	
 
@@ -34,28 +45,33 @@ foreach ($_POST as $name => $value)
 
 echo "\n    <br>corrected phrase is $correctedphrase\n    <br>";
 
-## do the alterations
-## this is defensive - shouldn't need it but out of paranoia I'm keeping it.
-$escapedcorrectedphrase = mysqli_real_escape_string($link , $correctedphrase);
-$query = "UPDATE entry SET phrase='$escapedcorrectedphrase'";
-$query .= " WHERE ID = $id;";
-
-if (mysqli_query($link, $query))
+## do the update - This time, with CLASS
+try
 {
-	echo "\n    <br>Correction has been applied to the phrase\n    <br>";
-	// post to rank.php
-	echo "\n    <form method=\"post\" action=\"rank.php\">";
-	echo "\n        <input type=\"hidden\" name=\"id\" value=\"$id\">";	
-	echo "\n        <br>";        
-	echo "\n        <br>";        
-	echo "\n        <input type=\"submit\" value=\"Proceed to enter rank.\">";
-	echo "\n    </form>"; 			
+	$rowdata='{"target" : "phrase" , "value" : "'.$correctedphrase.'" , "id" : "'.$id.'"}';
+	$dbops->UpdateRow($rowdata);
+}
+catch(Exception $e)
+{
+	echo "Could not update the row with id $id: $e";
+	echo "\n</body>";
+	echo "\n</html>";
+	exit;	
 }
 
-?>
+echo "\n    <br>Correction has been applied to the phrase\n    <br>";
 
-    <br>
-    <br>
-    <a href="dumpdb.php">Dump db</a>
-</body>
-</html>
+try
+{
+	$formdata='{ "postto" : "rank.php" , "hiddens" : [ { "name" : "id" , "value" : "'.$id.'"} ] }';
+	$formjson->GenerateForm($formdata);
+}
+catch (Exception $e)
+{
+	echo "Could not generate form for rank.php: $e";
+
+}
+echo "\n</body>";
+echo "\n</html>";
+
+?>

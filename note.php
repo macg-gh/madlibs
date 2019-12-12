@@ -8,21 +8,30 @@
 <body>
 <?php
 require_once('dbconfig.php');
+require_once('./lib/formjson.php');
+
 $id = $_POST['id'];
+
+$formjson = new FormJson;
 
 if (!isset($_POST['note']) )
 {
-	echo "<br>";
-	echo "Please enter a note.";
-	echo "<form method=\"post\">";
-	echo "<input type=\"hidden\" name=\"id\" value=\"$id\">";	
-    echo "<br>";
-    echo "<br>";            
-    echo "<textarea name=\"note\"></textarea>";
-    echo "<br>";            
-    echo "<br>";            
-    echo "<input type=\"submit\" value=\"Submit note.\">";
-    echo "</form>"; 	
+	echo "<br>";	
+	$formdata = '{
+		"postto" : "note.php",
+		"textareas" : [{"info" : "Please enter a note : " , "name": "note" }] ,
+		"hiddens" : [{ "name" : "id" , "value" : "'.$id.'"  }]
+	}';	
+	try{
+		$formjson->GenerateForm($formdata);
+	}
+	catch(Exception $e){
+		echo "Generate form for note submitting did not work: $e";
+		echo "Generate form for rank submitting did not work: $e";
+		echo "\n</body>";
+		echo "\n</html>";
+		exit;			
+	}	
 }	
 elseif ((is_numeric($id)) && ( $id > 0) )
 {
@@ -43,7 +52,7 @@ elseif ((is_numeric($id)) && ( $id > 0) )
 		echo "Madlib fully entered!.";
 		echo "<br>";
 		echo "<br>";
-		echo "<a href=\"madlib.php\">Do Another Madlib? Suffer like G did?</a>";
+		echo "<a href=\"madlib.php\">Do Another Madlib?</a>";
 	}
 	else
 	{
@@ -52,12 +61,7 @@ elseif ((is_numeric($id)) && ( $id > 0) )
 	}	
 
 }
+
+echo "\n</body>";
+echo "\n</html>";
 ?>
-
-<br>
-<br>
-<a href="dumpdb.php">Dump db</a>
-
-</body>
-
-</html>

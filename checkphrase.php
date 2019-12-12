@@ -8,125 +8,131 @@
 </style>
 <body>
 <?php
-require_once('dbconfig.php');
-require_once('dictionary.php');
+
+require_once('./lib/formjson.php');
+require_once('./lib/dictionary.php');
+require_once('./lib/dbops.php');
 
 $postargcount=count($_POST);
-// foreach ($_POST as $name => $value){ echo "$name $value\n"; } // exit;
+
 $last_id;
+
+$formjson = new FormJson;
+$dictionary = new Dictionary;
+$dbops = new DBOps;
+$i;
+
 if( $postargcount> 0 && $postargcount < 21 ) 
 {
 	$letter_errors='';
-	$mispelled_words;
+	$mispelled_words=[];
 	$i=0;
+	$phrase='';
 
 	foreach ($_POST as $letter => $word)
 	{
-		// unit test - 		$letter = 'P';
 		if ( strcmp(strtoupper($word[0]),$letter[0]) != 0 )
 		{
-			$letter_errors.="    Letter match check failed for the following: $word for letter $letter <br>\n";
+			echo "    Letter match check failed for the following: $word for letter $letter <br>\n</body>\n</html>";
+			exit;
 		}
-		//// only do the spelling check and suggestions if the letter match is good.
-		elseif (!pspell_check($pspell_link, $word))
+		//// The spelling check and suggestions will only happen if the letter match is good.
+		elseif (!($dictionary->SpellCheck($word)))
 		{
-			
-			$mispelled_words[$i]=$word;
-			// echo "\n word: ".$word."\n\n";						
-			// echo "\nmispelled words i: ".$mispelled_words[$i]."\n\n";
-			// echo "\n i: ".$i."\n\n";			
+			$mispelled_words[$i]=$word;		
 			$i++;
 		}
 	}
 	
-	if (!$letter_errors=='')
+	// Put the mispels in the DB, then correct them if the user decides to do so.
+	echo "    <br>";
+
+	//// build phrase, then use default values for rank and for note for now - these will be altered later.
+	foreach ($_POST as $word)
 	{
-		echo "\n    <br>No DB operations performed due to letter mismatches on the phrase submission.\n    <br>$letter_errors\n    <br>";
+		$phrase .= $word." ";
 	}
-	// if the letters are OK, put the mispels in the DB, then check if corrections are needed.
-	else
+	
+	//// default rank of 0, default note of -
+	$rowjsondata = '{ "phrase" : "'.$phrase.'" , "rank" : "0" , "note" : "-" }';
+	// perform the db insert. Mispelled words will be corrected after if the user chooses to do so.
+	try
 	{
-		echo "    <br>";
-
-		//// build phrase, then use default values for rank and for note for now - these will be altered later.
-		foreach ($_POST as $word)
-		{
-			$phrase .= $word." ";
-		}
-		$query = "insert into entry (phrase, rank, note) values(";
-		$query .= "'";
-		$query .= $phrase;
-		$query .= "',";
-		$query .= "'";
-		//// default rank of 0 for now.
-		$query .= "0"; 
-		$query .= "',";
-		$query .= "'";
-		//// default note of - for now.
-		$query .= "-";
-		$query .= "'";
-		$query .= ");";
-		// unit test - // $query = "''''''asdfasdfa'''LLL::13218&(&(*U&0";
-
-		if (mysqli_query($link, $query))
-		{
-			echo "\n\n<br><br> query succesful, it was: $query \n\n<br><br>";
-			//// GET THE ID.
-			$last_id = mysqli_insert_id($link);			
-
-			echo "\n    <form method=\"post\" action=\"rank.php\">";
-			echo "\n        <input type=\"hidden\" name=\"id\" value=\"$last_id\">";	
-			echo "\n        <br>";        
-			echo "\n        <br>";        
-			echo "\n        Mispelled words detected: ".count($mispelled_words)."<br>"."If you would like to proceed submitting the words you have entered, click Proceed. <br>";
-			echo "\n        <br>";        						
-			echo "\n        <input type=\"submit\" value=\"Proceed.\">";			
-			echo "\n    </form>"; 		
-			echo "\n        <br>";        
-			echo "\n        <br>";        			
-			echo "\n        Options for word correction are shown below for ".count($mispelled_words)." mispelled words. <br>";			
-		}
-		else
-		{
-			echo "    <br>";
-			echo "    <br>";
-			echo "Attempted to insert a row for the phrase with defaults for the non-phrase values. The following insert was not successful: ";
-			echo $query;
-		}			
-
-		//// Check for mispels which will be corrected if necessary.
-		//   echo "\ncount of mispelled words ".count($mispelled_words);
-		if (count($mispelled_words)!=0)
-		{
-			echo "\n    <form method=\"post\" action=\"corrections.php\">";
-			
-			foreach ($mispelled_words as $mispelled_word)
-			{
-				
-				echo "    Possible spelling:<br>\n";
-				$suggestions = pspell_suggest ( $pspell_link , $mispelled_word );
-				foreach ($suggestions as $suggestion)
-				{
-					echo "    $suggestion<br>\n";
-				}
-				echo "\n    Enter correction for word $mispelled_word\n<br>";				
-				echo "\n    <textarea name=\"$mispelled_word\"></textarea>";
-				echo "\n        <br>";        			
-				echo "\n        <br>";    				
-			}
-			echo "\n        <input type=\"hidden\" name=\"id\" value=\"$last_id\">";	
-			echo "\n        <input type=\"submit\" value=\"Submit corrections.\">";
-			echo "\n    </form>"; 
-			echo "\n    Still need a new piece here to say save the word instead.\n<br>";
-			
-		}
+		$dbops->InsertRow($rowjsondata);
+	}
+	catch(Exception $e)
+	{
+		echo "Insert Row operation failed: $e";
+		echo "\n</body>";
+		echo "\n</html>";
+		exit;			
+	}
+	try
+	{
+		$last_id = $dbops->GetLastID();
+	}
+	catch(Exception $e)
+	{
+		echo "Could not obtain last ID: $e";
+		echo "\n</body>";
+		echo "\n</html>";
+		exit;		
 	}	
+	
+	echo "\n        Mispelled words detected: ".count($mispelled_words)."<br>\n        <br>\n        ";
+	echo "If you would like to proceed submitting the words you have entered, click Submit. <br>\n";
+	try
+	{
+		$formdata = '{'."\n".'"postto" : "rank.php",'."\n".'"hiddens" : [{"name" : "id" , "value": "'.$last_id.'" }]'."\n".'}';	
+		$formjson->GenerateForm( $formdata);
+	}
+	catch (Exception $e)
+	{
+		echo "\n	<br>Generation of proceed without correction form in checkphrase.php was unsuccessful. $e";
+		echo "\n</body>";
+		echo "\n</html>";
+		exit;
+	}	
+	
+	echo "\n        <br>";        			
+	echo "\n        <br>";        			
+
+	// For each mispelled word, use the dictionary to get the suggestions. Then generate the form to submit the corrections.
+	$formdata='';
+	if(count($mispelled_words) != 0)
+	{
+		echo "\n        Options for word correction are shown below for ".count($mispelled_words)." mispelled words. <br>";			
+		
+		$formdata = '{'."\n".'"postto" : "corrections.php",'."\n".'"hiddens" : [{"name" : "id" , "value": "'.$last_id.'" }] ,'."\n".'"textareas" : [';
+		$i=1;
+		$len = count($mispelled_words);
+		foreach ($mispelled_words as $mispelled_word)
+		{
+			$dictionary->SuggestWords($mispelled_word);
+			
+			if ($i == $len)
+			{
+				$formdata .= '{ "info" : "correction for '.$mispelled_word.' : " , "name" : "'.$mispelled_word.'"}]'."\n".'}';	
+			}
+			else
+			{
+				$formdata .= '{ "info" : "correction for '.$mispelled_word.' : " , "name" : "'.$mispelled_word.'"} ,';	
+			}
+			$i++;
+		}
+		try
+		{
+			$formjson->GenerateForm($formdata);				
+		}
+		catch (Exception $e)
+		{
+			echo "\n	<br>Generation of correction form in checkphrase.php was unsuccessful. $e";
+		}
+	}		
+
+echo "\n</body>";
+echo "\n</html>";
+	
 }
 
 ?>
-
-    <br>
-    <br>
-    <a href="dumpdb.php">Dump db</a>
-</body>
-</html>
