@@ -22,6 +22,7 @@ The password value used will be the root password of mysql, and will be required
 2 - Run dbcreate.sql
 You can paste the command into the msyql prompt after doing step 1.
 Or, you can run this with the following command: source database.sql
+
 Note - you may have to include the path to this file depending on where it is located.
 
 3 - Update apt and install necessary parts of pspell
