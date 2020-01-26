@@ -70,6 +70,7 @@ rank.php
 6 - IF USING MASTER BRANCH: Edit dbconfig.php to use the password set in step 1. Enter it for the 3rd parameter to the mysql_connect function.
 
 IF USING CLASSES BRANCH: Edit lib/dbops.php to use the password set in step 1. Enter it for the 3rd parameter in the constructor of the DBOps class. E.g: 
+
 	function __construct()
 	{
 		$this->dblink = mysqli_connect("127.0.0.1", "root", "<ENTER PASSWORD HERE AND SAVE FILE>", "madlibs");
