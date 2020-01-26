@@ -47,15 +47,25 @@ This should not emit "Uncaught Error: Call to undefined function pspell_new_pers
 4 - service apache2 restart
 
 5 - Place the following files into /var/www/html/
+
 checkphrase.php
+
 corrections.php
+
 createtemplate.php
+
 dbconfig.php
+
 dictionary.php
+
 dumpdb.php
+
 madlib.php
+
 note.php
+
 rank.php
+
 
 6 - Edit dbconfig.php to use the password set in step 1. Enter it for the 3rd parameter to the mysql_connect function.
 
