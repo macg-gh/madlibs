@@ -44,7 +44,7 @@ $psspell_link= pspell_new_personal ("/var/dictionaries/custom.pws","en","","",""
 
 This should not emit "Uncaught Error: Call to undefined function pspell_new_personal() in php shell code", instead it should allow you to enter that line and move on to the next prompt where you can enter a line. Type 'exit' then hit enter to stop.
 
-4 - service apache restart
+4 - service apache2 restart
 
 5 - Place the following files into /var/www/html/
 checkphrase.php
