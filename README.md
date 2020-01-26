@@ -25,10 +25,15 @@ Or, you can run this with the following command: source database.sql
 Note - you may have to include the path to this file depending on where it is located.
 
 3 - Update apt and install necessary parts of pspell
+
 apt update
+
 apt upgrade - install package maintainer’s version when prompted
+
 apt install g++
+
 apt install aspell
+
 apt install php7.2-pspell
 
 php -a
