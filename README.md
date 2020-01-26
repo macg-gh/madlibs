@@ -37,6 +37,7 @@ apt install aspell
 apt install php7.2-pspell
 
 php -a
+
 $psspell_link= pspell_new_personal ("/var/dictionaries/custom.pws","en","","","",PSPELL_FAST|PSPELL_RUN_TOGETHER );
 
 This should not emit "Uncaught Error: Call to undefined function pspell_new_personal() in php shell code", instead it should allow you to enter that line and move on to the next prompt where you can enter a line. Type 'exit' then hit enter to stop.
