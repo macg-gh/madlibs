@@ -17,6 +17,7 @@ To deploy:
 1 - Change the auth strategy for mysql.
 Start mysql with just 'mysql' and no other options. The changes we're about to make will make a password mandatory.
 Run the following command in mysql: ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '<YOUR PASSWORD>';
+  
 The password value used will be the root password of mysql, and will be required for logins from this point forward.
 
 2 - Run dbcreate.sql
